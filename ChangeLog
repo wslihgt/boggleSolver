@@ -1,0 +1,8 @@
+2013-06-04  Jean-Louis Durrieu  <jean-louis.durrieu@epfl.ch>
+
+	* boggleSolver.py (Path.__string__): 
+	added bonus and points to the arguments of Ruzzle class
+	But should be also added as meta params:
+	    points should be read from scrabble point list
+	    bonus has to be typed.
+
