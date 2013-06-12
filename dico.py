@@ -31,8 +31,8 @@ def addWordToPrefix(prefix, word):
         currentdico = currentdico[c]
     currentdico['EOW'] = None
 
-dicofilename = 'beep.txt' ## English
-# dicofilename = 'liste.de.mots.francais.frgut.txt'
+# dicofilename = 'beep.txt' ## English
+dicofilename = 'liste.de.mots.francais.frgut.txt'
 txtfile = open(dicofilename)
 
 lines = txtfile.readlines()

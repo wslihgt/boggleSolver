@@ -14,6 +14,18 @@ for r in [-1, 0, 1]:
         extendIncrement.append([r,c])
 extendIncrement.remove([0,0])
 
+directions = {
+    0: ' ',
+    ( 1, 1): '\\', #'/',
+    ( 1, 0): '|',
+    ( 1,-1): '/',
+    ( 0,-1): '-',
+    (-1,-1): '\\',
+    (-1, 0): '|',
+    (-1, 1): '/',
+    ( 0, 1): '-'
+    }
+
 def initArray(array, rows, cols, type='num'):
     if (not(isinstance(array, np.ndarray)) and
         not(isinstance(array, str)) and array is not None):
@@ -159,18 +171,42 @@ class Path(object):
         """
         stringPath = ''
         prefix = '        '
-        gridPath = np.zeros(self.letterGrid.letters.shape)
+        nl, nc = self.letterGrid.letters.shape
+        gridPath = np.zeros([2*nl-1, 2*nc-1])
+        gridPath = [0,] * (2*nl-1)
+        for row in range(2*nl-1):
+            gridPath[row] = [0,] * (2*nc - 1)
         ##s = ('          X  X  X  X\n' +
         ##     '          X  X  X  X\n' +
         ##     '          X  X  X  X\n' +
         ##     '          X  X  X  X\n')
         
+        
         for ns, s in enumerate(self.sequence):
-            gridPath[s[0],s[1]] = ns + 1
+            if ns!=0:
+                gridPath[s[0]+self.sequence[ns-1][0]][
+                    s[1]+self.sequence[ns-1][1]] = (
+                    (s[0] - self.sequence[ns-1][0],
+                     s[1] - self.sequence[ns-1][1])
+                    )
+            gridPath[2*s[0]][2*s[1]] = ns + 1
             
-        for row in range(self.letterGrid.rows):
+        # print gridPath
+        
+        for row in range(2 * nl - 1):
             stringPath += prefix
-            stringPath += ''.join([('%3d' %g) for g in gridPath[row]])
+            if row%2:
+                stringPath += ' ' + directions[gridPath[row][0]] + ' '
+            else:
+                stringPath += '%2d ' %gridPath[row][0]
+            for col in range(1, nc):
+                if row%2:
+                    stringPath += ' ' + directions[gridPath[row][2*col-1]] + ' '
+                    stringPath += ' ' + directions[gridPath[row][2*col]] + ' '
+                else:
+                    # stringPath += '   '
+                    stringPath += ' ' + directions[gridPath[row][2*col-1]] + ' '
+                    stringPath += '%2d ' %gridPath[row][2*col] 
             stringPath += '\n'
         
         return stringPath
@@ -186,8 +222,11 @@ class Path(object):
         return score * totMul
 
 class Ruzzle(object):
-    def __init__(self, letters=None,):
-        self.letterGrid = LetterGrid(letters=letters, rows=4, cols=4)
+    def __init__(self, letters=None, bonus=None, points=None):
+        self.letterGrid = LetterGrid(letters=letters,
+                                     bonus=bonus,
+                                     points=points,
+                                     rows=4, cols=4)
 
     def listAllWords(self):
         """Take the letter Grid, compute all words and list them
